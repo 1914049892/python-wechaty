@@ -167,9 +167,10 @@ class Room(Accessory[RoomPayload]):
                 payload = room.payload
                 if not payload:
                     return False
-                if query == payload.id or (query.lower() in payload.topic.lower()): # type: ignore
+                if query == payload.id or (query.lower() in payload.topic.lower()):  # type: ignore
                     return True
                 return False
+
             func = filter_func
         elif isinstance(query, RoomQueryFilter):
             def filter_func(room: Room) -> bool:
@@ -179,9 +180,10 @@ class Room(Accessory[RoomPayload]):
                 if not payload:
                     return False
 
-                if query.id == payload.id or (query.topic.lower() in payload.topic.lower()): # noqa
+                if query.id == payload.id or (query.topic.lower() in payload.topic.lower()):  # noqa
                     return True
                 return False
+
             func = filter_func
         elif isinstance(query, types.FunctionType):
             func = query
@@ -230,7 +232,7 @@ class Room(Accessory[RoomPayload]):
         rooms: List[Room] = [cls.load(room_id) for room_id in room_ids]
         tasks: List[Task] = [asyncio.create_task(room.ready()) for room in rooms]
         await gather_with_concurrency(PARALLEL_TASK_NUM, tasks)
-        
+
         # 2. filter the rooms
         if not query:
             return rooms
@@ -289,6 +291,15 @@ class Room(Accessory[RoomPayload]):
         room = cls(room_id)
         cls._pool[room_id] = room
         return room
+
+    @classmethod
+    def upload_cache(cls, room_id: str)->None:
+        """
+        dynamic upload
+        clear the room_id of _pool and upload it use load
+        """
+        cls._pool[room_id] = None
+        cls.load(room_id)
 
     def __str__(self) -> str:
         """
@@ -349,7 +360,7 @@ class Room(Accessory[RoomPayload]):
 
     async def say(self,
                   some_thing: Union[str, Contact,
-                                    FileBox, MiniProgram, UrlLink],
+                  FileBox, MiniProgram, UrlLink],
                   mention_ids: Optional[List[str]] = None
                   ) -> Union[None, Message]:
         """
