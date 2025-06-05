@@ -293,13 +293,18 @@ class Room(Accessory[RoomPayload]):
         return room
 
     @classmethod
-    def upload_cache(cls, room_id: str)->None:
+    def upload_cache(cls, room_id: str) -> Room:
         """
         dynamic upload
-        clear the room_id of _pool and upload it use load
+        clear the room_id from _pool and re-upload it using load
+        Args:
+            room_id: The Roo ID to refresh
+        Return:
+            Room:The refreshed room instance
         """
-        cls._pool[room_id] = None
-        cls.load(room_id)
+        if room_id in cls._pool:
+            del cls._pool[room_id]
+        return cls.load(room_id)
 
     def __str__(self) -> str:
         """

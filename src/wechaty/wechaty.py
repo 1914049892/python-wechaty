@@ -99,7 +99,6 @@ from wechaty.exceptions import (
 
 from wechaty.utils import timestamp_to_date, qr_terminal
 
-
 log: logging.Logger = get_logger('Wechaty')
 
 DEFAULT_TIMEOUT = 300
@@ -472,7 +471,7 @@ I suggest that you should follow the template code from: https://wechaty.readthe
             loop = asyncio.get_event_loop()
             loop.stop()
 
-        except Exception as e:      # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-except
             print(e)
 
     async def restart(self) -> None:
@@ -713,7 +712,8 @@ I suggest that you should follow the template code from: https://wechaty.readthe
                 async def room_topic_listener(payload: EventRoomTopicPayload) -> None:
                     log.info('receive <room-topic> event <%s>', payload)
 
-                    room: Room = self.Room.upload_cache(payload.room_id)
+                    self.Room.upload_cache(payload.room_id)
+                    room: Room = self.Room.load(payload.room_id)
                     await room.ready()
 
                     changer = self.Contact.load(payload.changer_id)
