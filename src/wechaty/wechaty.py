@@ -712,7 +712,7 @@ I suggest that you should follow the template code from: https://wechaty.readthe
                 async def room_topic_listener(payload: EventRoomTopicPayload) -> None:
                     log.info('receive <room-topic> event <%s>', payload)
 
-                    self.Room.upload_cache(payload.room_id)
+                    self.Room.upload_cache(payload.room_id)  # type: ignore[attr-defined]
                     room: Room = self.Room.load(payload.room_id)
                     await room.ready()
 
